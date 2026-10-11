@@ -40,7 +40,7 @@ table{width:100%;border-collapse:collapse;background:var(--card)}th,td{padding:8
 .sh .lb{width:92mm;border:2px solid #1b3a78;border-radius:6px;padding:6px 8px;margin:0 4mm 4mm 0;display:inline-block;vertical-align:top;page-break-inside:avoid;font-size:11px;text-align:center}.sh .lb .lg{height:34px}.sh .lb .ci{font-size:20px;font-weight:700;color:#1b3a78}.sh .lb .lc{font-size:17px;font-weight:700;background:#e8f3fa;margin:4px 0;padding:3px}.sh .lb .qr{width:34mm;height:34mm}.sh .lb .fl{color:#c0392b;font-weight:700}
 @media print{body>*:not(#sheet){display:none!important}#sheet{display:block!important}@page{margin:9mm}}
 </style></head><body>
-<header><img id="lg" alt="CityCube Warehousing"><div><h1>Storage Manager</h1><small>Inbound • Storage • Outbound • Tax Invoice • v9</small><small id="sy" style="font-weight:700"></small></div>
+<header><img id="lg" alt="CityCube Warehousing"><div><h1>Storage Manager</h1><small>Inbound • Storage • Outbound • Tax Invoice • v10</small><small id="sy" style="font-weight:700"></small></div>
 <nav><button id="t1" class="on">New Entry</button><button id="t2">Records (<span id="cnt">0</span>)</button><button id="t3">Settings</button><button id="sv" hidden>⬇ Save last print</button></nav></header>
 <main>
 <section id="v1"><form onsubmit="return false">
@@ -1135,7 +1135,7 @@ function labels(r){const link=/^http/.test(location.protocol)?location.origin+lo
 const SEP='<div style="page-break-after:always"></div>',mv=r=>{try{return JSON.parse(r.moves||"[]")}catch(e){return[]}};
 function relDoc(x,m){return head("GOODS RELEASE NOTE",`<b>Ref: ${esc(x.cid)}</b><br>Date: ${esc(m.date)}${m.inv?"<br>Invoice: "+esc(m.inv):""}`)+`<table>${row("Customer",x.name,"Mobile",x.mob)}${row("Collected by",m.by,"Warehouse location",x.loc)}${row("Items released",m.items||x.desc,"Quantity released",m.qty+" "+x.basis+(m.pk?" / "+m.pk+" pkgs":""))}${row("Original goods",x.desc,"Remaining in storage",x.qty+" "+x.basis+(x.pk?" / "+x.pk+" pkgs":""))}</table><p><b>I confirm that I have received the above goods in good condition.</b> The remaining goods continue to be stored under the terms and conditions mentioned overleaf.</p><div class=sg><div>Customer / collector signature &amp; date</div><div>${esc(S.co)} – signature &amp; stamp</div></div>`}
 function partial(r){if(r.outDone)return;const q0=+r.qty||0;
- $("mdc").innerHTML=`<h3 style="margin-top:0;color:var(--nv)">Partial outbound – ${esc(r.name)}</h3><p style="margin:0 0 8px;font-size:13px;color:var(--mut)">In storage now: <b>${q0} ${esc(r.basis)}</b>${r.pk?" / "+esc(r.pk)+" pkgs":""}. The balance stays in the warehouse and is billed on the reduced quantity afterwards.</p>
+ $("mdc").innerHTML=`<h3 style="margin-top:0;color:var(--nv)">Partial outbound – ${esc(r.name)}</h3><p style="margin:0 0 4px;font-size:13px">${esc(r.cid)} • ${esc(r.mob||"")} • Location: <b>${esc(r.loc)}</b><br>${esc(r.desc).slice(0,90)}</p><p style="margin:0 0 8px;font-size:13px;color:var(--mut)">In storage now: <b>${q0} ${esc(r.basis)}</b>${r.pk?" / "+esc(r.pk)+" pkgs":""}. The balance stays in the warehouse and is billed on the reduced quantity afterwards.</p>
 <div class=g><label>Release date<input type=date id="p1" value="${today()}"></label><label>Quantity released (${esc(r.basis)})<input type=number id="p2" step=0.01 min=0></label><label>Packages / pallets released<input type=number id="p3" min=0></label><label>Collected by (name / ID)<input id="p4"></label><label class=w2>Items released<input id="p5"></label><label>Other charges AED<input type=number id="p6" step=0.01></label><label>Other charges description<input id="p7"></label><label>Discount AED<input type=number id="p8" step=0.01></label><label>Payment received now AED<input type=number id="p9" step=0.01></label></div>
 <div class=bar style="position:static"><button class=btn id="pc">✔ Confirm, print invoice &amp; release note</button><button class="btn o" id="px">Cancel</button></div>`;$("md").style.display="flex";
  $("px").onclick=()=>$("md").style.display="none";
@@ -1150,7 +1150,12 @@ function partial(r){if(r.outDone)return;const q0=+r.qty||0;
   x.charge=n2(tx.p);x.balance=n2(tx.t-(+x.paid||0));x.status=stOf(x);
   if(!await persist(x)){$("pc").disabled=false;return}push([x],false,inv);$("md").style.display="none";if($("cid").value==x.cid)fill(x);
   docs.push(relDoc(x,m));printDoc(docs.join(SEP),(xi.invNo||x.cid)+"_release")}}
-$("po").onclick=async()=>{const r=await save();if(r)partial(r)};
+function pickPartial(){
+ $("mdc").innerHTML=`<h3 style="margin-top:0;color:var(--nv)">Partial outbound – select customer</h3><label>Search customers in storage<input id="pk1" placeholder="Name, ID, mobile or location"></label><label style="margin-top:8px">Customer<select id="pk2"></select></label><div class=bar style="position:static"><button class="btn o" id="pk3">Cancel</button></div>`;$("md").style.display="flex";
+ const fl=()=>{const q=$("pk1").value.toLowerCase(),l=recs.filter(r=>!r.outDone&&(!q||[r.cid,r.name,r.mob,r.loc,r.desc,r.idno].join(" ").toLowerCase().includes(q))).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+  $("pk2").innerHTML=`<option value="" selected disabled>${l.length?"Select customer…":"No customers in storage found"}</option>`+l.map(r=>`<option value="${esc(r.cid)}">${esc(r.name)} – ${esc(r.cid)} – ${esc(r.qty)} ${esc(r.basis)} – ${esc(r.loc)}</option>`).join("")};
+ fl();$("pk1").oninput=fl;$("pk3").onclick=()=>$("md").style.display="none";$("pk2").onchange=()=>{const r=recs.find(x=>x.cid==$("pk2").value);if(r)partial(r)}}
+$("po").onclick=pickPartial;
 function openQ(){const c=new URLSearchParams(location.search).get("cid"),r=c&&recs.find(x=>x.cid==c);if(r){fill(r);tab(1);toast("Opened "+c)}}
 $("lbl").onclick=async()=>{const r=await save();if(r)labels(r)};$("rmd").onclick=reminders;$("mi").onclick=monthly;
 const SK=["co","trn","addr","ph","em","vat","pre","bank","foot","hook","key"];
