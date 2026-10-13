@@ -37,11 +37,20 @@ table{width:100%;border-collapse:collapse;background:var(--card)}th,td{padding:8
 .sh{color:#000;background:#fff;font:11px Arial,sans-serif;padding:4px}.sh .hd{display:flex;align-items:center;gap:12px;border-bottom:3px solid #3fb4d4;padding-bottom:6px;margin-bottom:8px}.sh .hd img{height:62px}.sh .hd .co{flex:1;font-size:10px;color:#333}.sh .hd .co b{font-size:15px;color:#1b3a78}.sh .hd .rt{text-align:right}
 .sh h2{margin:0 0 6px;font-size:17px;color:#1b3a78;letter-spacing:1px;text-align:center}.sh table{width:100%;border-collapse:collapse;background:#fff;margin-bottom:6px}.sh td,.sh th{border:1px solid #aab;padding:4px 6px;font-size:11px;color:#000;background:#fff}.sh th{background:#1b3a78;color:#fff}.sh td.k{background:#e8f3fa;font-weight:700;width:17%}.sh .r{text-align:right}
 .sh .ph{display:flex;gap:6px;flex-wrap:wrap}.sh .ph img{height:78px;border:1px solid #999}.sh .sg{display:flex;gap:30px;margin-top:38px}.sh .sg div{flex:1;border-top:1px solid #000;padding-top:3px;text-align:center;font-size:10px}
+.plans{display:flex;gap:14px;flex-wrap:wrap}.pl{flex:1;min-width:300px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px}.pl h4{margin:0 0 8px;color:var(--nv)}
+.pg{display:flex;gap:6px;align-items:stretch}.pc{flex:1;display:flex;flex-direction:column;gap:5px}
+.ai{width:30px;background:repeating-linear-gradient(0deg,#0000,#0000 14px,#e0a80030 14px,#e0a80030 16px),var(--bg);border-radius:6px;font-size:9px;color:var(--mut);writing-mode:vertical-rl;display:flex;align-items:center;justify-content:center;letter-spacing:2px}
+.bay{border:1px solid var(--bd);border-radius:7px;background:var(--bg);padding:3px 5px;min-height:46px}.bay.ov{border-color:var(--wr);box-shadow:0 0 0 2px #c0392b44}.bay.dh{outline:2px dashed var(--ac)}
+.bt{display:flex;justify-content:space-between;font-size:10px;color:var(--mut)}.bt b{color:var(--nv)}
+.bb{display:flex;height:22px;border-radius:4px;background:#8882;overflow:hidden;margin-top:2px}.pc.r .bb{flex-direction:row-reverse}
+.sg2{height:100%;font-size:10px;color:#111;overflow:hidden;white-space:nowrap;padding:3px 4px;cursor:grab;border-right:1px solid #fff8}.sg2.od{outline:2px solid var(--wr);outline-offset:-2px}.sg2.sl{outline:2px solid var(--nv)}
+.dk{text-align:center;font-size:11px;color:var(--mut);margin-top:6px}.un{background:var(--card);border:2px dashed var(--bd);border-radius:12px;padding:10px;margin:10px 0}.un.dh{border-color:var(--ac)}
+.chip{display:inline-block;margin:3px;padding:5px 9px;border-radius:8px;background:var(--bg);border:1px solid var(--bd);border-left:6px solid;font-size:12px;cursor:grab}.chip.sl{outline:2px solid var(--nv)}
 .sh .lb{width:92mm;border:2px solid #1b3a78;border-radius:6px;padding:6px 8px;margin:0 4mm 4mm 0;display:inline-block;vertical-align:top;page-break-inside:avoid;font-size:11px;text-align:center}.sh .lb .lg{height:34px}.sh .lb .ci{font-size:20px;font-weight:700;color:#1b3a78}.sh .lb .lc{font-size:17px;font-weight:700;background:#e8f3fa;margin:4px 0;padding:3px}.sh .lb .qr{width:34mm;height:34mm}.sh .lb .fl{color:#c0392b;font-weight:700}
 @media print{body>*:not(#sheet){display:none!important}#sheet{display:block!important}@page{margin:9mm}}
 </style></head><body>
-<header><img id="lg" alt="CityCube Warehousing"><div><h1>Storage Manager</h1><small>Inbound • Storage • Outbound • Tax Invoice • v10</small><small id="sy" style="font-weight:700"></small></div>
-<nav><button id="t1" class="on">New Entry</button><button id="t2">Records (<span id="cnt">0</span>)</button><button id="t3">Settings</button><button id="sv" hidden>⬇ Save last print</button></nav></header>
+<header><img id="lg" alt="CityCube Warehousing"><div><h1>Storage Manager</h1><small>Inbound • Storage • Outbound • Tax Invoice • v12</small><small id="sy" style="font-weight:700"></small></div>
+<nav><button id="t1" class="on">New Entry</button><button id="t2">Records (<span id="cnt">0</span>)</button><button id="t4">Layout</button><button id="t3">Settings</button><button id="sv" hidden>⬇ Save last print</button></nav></header>
 <main>
 <section id="v1"><form onsubmit="return false">
 <fieldset><legend>Customer</legend><div class="g">
@@ -71,7 +80,7 @@ table{width:100%;border-collapse:collapse;background:var(--card)}th,td{padding:8
 <label>Security deposit (AED)<input type="number" id="dep" min="0" step="0.01"></label>
 <label>Advance paid (AED)<input type="number" id="paid" min="0" step="0.01"></label>
 <label>Payment mode<select id="pmode"><option>Cash</option><option>Card</option><option>Bank transfer</option><option>Cheque</option></select></label>
-<label>Storage location in warehouse *<input id="loc" placeholder="Zone B / Rack 4 / Bay 12"></label>
+<label>Storage location (auto-filled from Layout)<input id="loc" placeholder="auto – or type manually"></label>
 </div>
 <div class="calc"><div>Chargeable period<b id="cp">–</b></div><div>Storage (excl. VAT)<b id="ec">AED 0.00</b></div><div>Incl. VAT<b id="ev">AED 0.00</b></div><div>Balance due<b id="bd">AED 0.00</b></div><div>Status<b id="stt">Active</b></div></div>
 </fieldset>
@@ -81,7 +90,7 @@ table{width:100%;border-collapse:collapse;background:var(--card)}th,td{padding:8
 <label>Total weight (kg)<input type="number" id="wt" min="0" step="0.1"></label>
 <label>Declared value (AED)<input type="number" id="val" min="0"></label>
 <label>Condition at receipt<select id="cond"><option>Good</option><option>Minor damage</option><option>Damaged</option></select></label>
-<label>Invoice / Packing list / Ref<input id="ref"></label>
+<label>Max item height (m)<input type="number" id="ht" min="0" step="0.01" placeholder="1 m or less allows mezzanine"></label><label>Invoice / Packing list / Ref<input id="ref"></label>
 <label>Received by (staff)<input id="staff"></label>
 <label class="w2">Goods pictures (add several – camera or gallery)<input type="file" id="gpic" accept="image/*" multiple><div class="th" id="gth"></div></label>
 <div class="w2"><label>Handling flags</label><div class="chk"><label><input type="checkbox" id="fr">Fragile</label><label><input type="checkbox" id="pe">Perishable</label><label><input type="checkbox" id="hz">Hazardous</label><label><input type="checkbox" id="ins">Insured by customer</label></div></div>
@@ -96,11 +105,19 @@ table{width:100%;border-collapse:collapse;background:var(--card)}th,td{padding:8
 <div class="tw"><table><thead><tr><th>ID</th><th>Name</th><th>Mobile</th><th>Location</th><th>Size</th><th>In</th><th>Out</th><th>Storage</th><th>Status</th><th>Invoice</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
 </section>
 
+<section id="v4" hidden>
+<div class="st" id="lst"></div>
+<div class="bar" style="position:static"><button class="btn" id="la">⚡ Auto-allocate unplaced</button><button class="btn s" id="lr">♻ Repack all (preview)</button><label style="display:flex;gap:6px;align-items:center;font-size:13px;color:var(--tx)"><input type="checkbox" id="lpm" checked style="width:auto;margin:0">Prefer mezzanine for low goods</label><label style="display:flex;gap:6px;align-items:center;font-size:13px;color:var(--tx)"><input type="checkbox" id="lau" checked style="width:auto;margin:0">Auto-allocate on save</label></div>
+<div id="lban"></div>
+<div class="un" id="unal"><b>To place</b> <span style="font-size:12px;color:var(--mut)">– drag a customer onto a bay, or tap a customer then tap a bay, or double-click to auto-place</span><div id="chips"></div></div>
+<div class="plans" id="plans"></div>
+<p style="font-size:12px;color:var(--mut)">Drag a coloured block to another bay to rearrange, drop it on the “To place” box to remove it, or click a block for options. Red outline = outbound overdue. Bay 1 is nearest the dock; short stays are placed near the dock, long stays deeper. 🔻 = low goods (mezzanine OK), ☣ = hazardous (gets a bay of its own).</p>
+</section>
 <section id="v3" hidden><fieldset><legend>Company &amp; Invoice Settings</legend><div class="g">
 <label class="w2">Company name<input id="s_co"></label><label>Company TRN<input id="s_trn"></label>
 <label class="w2">Address<input id="s_addr"></label><label>Phone<input id="s_ph"></label><label>Email<input id="s_em"></label>
 <label>VAT %<input type="number" id="s_vat" step="0.01"></label><label>Invoice prefix<input id="s_pre"></label>
-<label class="w2">Access key (must match KEY in the Apps Script – same on every device)<input id="s_key" type="password"></label><label class="w2">Bank details (printed on invoice)<textarea id="s_bank" rows="2"></textarea></label>
+<label>Bays per side<input type="number" id="s_bays"></label><label>Bay width (m)<input type="number" id="s_bw" step="0.01"></label><label>Bay height (m)<input type="number" id="s_bh" step="0.01"></label><label>Bay depth (m)<input type="number" id="s_bd" step="0.01"></label><label>Mezzanine usable area per side (sqm)<input type="number" id="s_ma" step="0.01"></label><label>Mezzanine clear height (m)<input type="number" id="s_mh" step="0.01"></label><label class="w2">Access key (must match KEY in the Apps Script – same on every device)<input id="s_key" type="password"></label><label class="w2">Bank details (printed on invoice)<textarea id="s_bank" rows="2"></textarea></label>
 <label class="w2">Invoice footer note<input id="s_foot"></label>
 <label class="w2">Google Sheet web-app URL (Apps Script – see setup guide)<input id="s_hook" placeholder="https://script.google.com/macros/s/…/exec"></label>
 </div><div class="bar" style="position:static"><button class="btn" id="ss">Save settings</button><button class="btn s" id="st">Send test row to Google Sheet</button></div></fieldset></section>
@@ -114,9 +131,9 @@ function $(id){return document.getElementById(id)}
 $("lg").src=LOGO;
 const F=["cid","edate","name","ctype","idtype","idno","idexp","trn","addr","mob","mob2","email","auth","authid","din","dout","basis","qty","cycle","rate","dep","paid","pmode","loc","desc","pk","wt","val","cond","ref","staff","rem"];
 const FL={cid:"Customer ID",edate:"Entry date",name:"Name",ctype:"Type",idtype:"ID type",idno:"ID number",idexp:"ID expiry",trn:"Customer TRN",addr:"Address",mob:"Mobile",mob2:"Alt mobile",email:"Email",auth:"Authorised pick-up",authid:"Pick-up ID/mobile",din:"Date inbound",dout:"Date outbound",basis:"Basis",qty:"Quantity",cycle:"Billing cycle",rate:"Rate (AED)",dep:"Deposit (AED)",paid:"Paid (AED)",pmode:"Payment mode",loc:"Warehouse location",desc:"Goods description",pk:"Packages",wt:"Weight kg",val:"Declared value",cond:"Condition",ref:"Invoice/Ref",staff:"Received by",rem:"Remarks",flags:"Flags",charge:"Storage charge excl VAT",balance:"Balance (AED)",status:"Status",invNo:"Tax invoice no",invDate:"Invoice date",invTotal:"Invoice total incl VAT",oAmt:"Other charges AED",oDesc:"Other charges description",disc:"Discount AED"};
-const COLS=[...F,"flags","charge","balance","status","invNo","invDate","invTotal","oAmt","oDesc","disc"],HDR=[...COLS.map(k=>FL[k]),"Goods photos","ID picture (Drive)","Goods pictures (Drive)","Monthly invoices (data)","Billed through","Partial releases (data)"];
+const COLS=[...F,"flags","charge","balance","status","invNo","invDate","invTotal","oAmt","oDesc","disc"],HDR=[...COLS.map(k=>FL[k]),"Goods photos","ID picture (Drive)","Goods pictures (Drive)","Monthly invoices (data)","Billed through","Partial releases (data)","Max item height (m)"];
 const FLAGS=[["fr","Fragile"],["pe","Perishable"],["hz","Hazardous"],["ins","Insured"]];
-let recs=[],ex={},id64="",gp=[],db=null,dl=null,last=null,S={co:"CityCube Warehousing",trn:"",addr:"",ph:"",em:"",vat:5,pre:"INV-",bank:"",foot:"Goods are stored subject to the terms and conditions mentioned overleaf.",hook:""};
+let recs=[],ex={},id64="",gp=[],db=null,dl=null,last=null,S={co:"CityCube Warehousing",trn:"",addr:"",ph:"",em:"",vat:5,pre:"INV-",bank:"",foot:"Goods are stored subject to the terms and conditions mentioned overleaf.",hook:"",bays:7,bw:3,bh:3,bd:6.5,ma:85,mh:1};
 const today=()=>new Date().toISOString().slice(0,10),n2=x=>(+x||0).toFixed(2);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function toast(m,ms){const t=$("toast");t.textContent=m;t.style.display="block";clearTimeout(t.h);t.h=setTimeout(()=>t.style.display="none",ms||3200)}
@@ -127,23 +144,23 @@ function tot(r){const p=per(r).u*(+r.qty||0)*(+r.rate||0),o=+r.oAmt||0,d=+r.disc
 const stOf=r=>r.outDone?"Closed":(r.dout&&r.dout<today()?"Overdue":"Active");
 function calc(){const r={...ex};F.forEach(k=>r[k]=$(k).value);const t=tot(r),p=per(r);
  $("cp").textContent=r.din?`${p.days} day(s) = ${p.u} ${p.unit}(s)`:"–";$("ec").textContent="AED "+n2(t.p);$("ev").textContent="AED "+n2(t.t);$("bd").textContent="AED "+n2(t.t-(+r.paid||0));$("stt").textContent=stOf(r);return{charge:n2(t.p),balance:n2(t.t-(+r.paid||0)),status:stOf(r)}}
-function collect(){const r={...ex};F.forEach(k=>r[k]=$(k).value.trim());r.flags=FLAGS.filter(f=>$(f[0]).checked).map(f=>f[1]).join(", ");Object.assign(r,calc());r.idImg=id64;r.gImgs=gp;r.saved=new Date().toISOString();return r}
+function collect(){const r={...ex};F.forEach(k=>r[k]=$(k).value.trim());r.flags=FLAGS.filter(f=>$(f[0]).checked).map(f=>f[1]).join(", ");Object.assign(r,calc());r.idImg=id64;r.gImgs=gp;r.ht=$("ht").value.trim();r.saved=new Date().toISOString();return r}
 function thumbs(){$("idth").innerHTML=id64?`<div><img src="${id64}"><b data-k="i">×</b></div>`:"";$("gth").innerHTML=gp.map((s,i)=>`<div><img src="${s}"><b data-k="g" data-i="${i}">×</b></div>`).join("")}
 document.addEventListener("click",e=>{const b=e.target.closest("b[data-k]");if(!b)return;if(b.dataset.k=="i")id64="";else gp.splice(+b.dataset.i,1);thumbs()});
-function fill(r){F.forEach(k=>$(k).value=r[k]||"");FLAGS.forEach(f=>$(f[0]).checked=(r.flags||"").includes(f[1]));ex={};["outDone","oDesc","oAmt","disc","invNo","invDate","invTotal","bills","billedTo","moves"].forEach(k=>{if(r[k]!==undefined)ex[k]=r[k]});id64=r.idImg||"";gp=[...(r.gImgs||[])];thumbs();$("ql").textContent=$("basis").value;calc()}
+function fill(r){F.forEach(k=>$(k).value=r[k]||"");$("ht").value=r.ht||"";FLAGS.forEach(f=>$(f[0]).checked=(r.flags||"").includes(f[1]));ex={};["outDone","oDesc","oAmt","disc","invNo","invDate","invTotal","bills","billedTo","moves"].forEach(k=>{if(r[k]!==undefined)ex[k]=r[k]});id64=r.idImg||"";gp=[...(r.gImgs||[])];thumbs();$("ql").textContent=$("basis").value;calc()}
 function blank(){fill({});$("edate").value=today();$("cid").value=nextId();$("idpic").value="";$("gpic").value="";$("cycle").value="Monthly"}
 function shrink(file,mx,cb){const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*s;c.height=im.height*s;c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.6))};im.src=rd.result};rd.readAsDataURL(file)}
 $("idpic").onchange=e=>e.target.files[0]&&shrink(e.target.files[0],700,d=>{id64=d;thumbs()});
 $("gpic").onchange=e=>{[...e.target.files].forEach(f=>{if(gp.length>=8)return toast("Max 8 pictures per record");shrink(f,560,d=>{gp.push(d);thumbs()})});e.target.value=""};
 ["din","dout","qty","cycle","rate","paid"].forEach(k=>$(k).oninput=calc);$("basis").onchange=()=>$("ql").textContent=$("basis").value;
 $("idno").onchange=()=>{const v=$("idno").value.trim(),o=recs.find(x=>x.idno==v&&x.cid!=$("cid").value);if(v&&o){["name","ctype","idtype","idexp","trn","addr","mob","mob2","email","auth","authid"].forEach(k=>$(k).value=o[k]||"");id64=o.idImg||"";thumbs();toast("Returning customer – details filled from "+o.cid)}};
-function valid(){for(const[k,l]of[["name","Customer name"],["idno","ID number"],["mob","Mobile"],["din","Date of inbound"],["loc","Storage location"],["desc","Goods description"]])if(!$(k).value.trim()){toast(l+" is required");$(k).focus();return false}return true}
-const rowOf=r=>[...COLS.map(k=>r[k]??""),(r.gImgs||[]).length,"","",r.bills||"",r.billedTo||"",r.moves||""];
+function valid(){for(const[k,l]of[["name","Customer name"],["idno","ID number"],["mob","Mobile"],["din","Date of inbound"],["desc","Goods description"]])if(!$(k).value.trim()){toast(l+" is required");$(k).focus();return false}return true}
+const rowOf=r=>[...COLS.map(k=>r[k]??""),(r.gImgs||[]).length,"","",r.bills||"",r.billedTo||"",r.moves||"",r.ht||""];
 const pend=new Set();
 function sy(ok,m){const e=$("sy");e.textContent=(ok?"☁ ✔ Synced ":"☁ ⚠ NOT synced – ")+m;e.style.color=ok?"var(--ok)":"var(--wr)"}
 async function push(list,noImg,inv){if(!S.hook)return toast("Add the Google Sheet URL in Settings to auto-sync");
  const o={method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({key:S.key||"",inv:inv||[],headers:HDR,rows:list.map(rowOf),images:noImg?[]:list.map(r=>({cid:r.cid,name:r.name,id:r.idImg||"",goods:r.gImgs||[]}))})};let ok=false,msg="";
- try{const r=await fetch(S.hook,o),t=(await r.text()).trim();ok=t=="ok";msg=ok?"":t=="denied"?"wrong access key (Settings must match KEY in the script)":"Google replied: "+t.replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim().slice(0,160)}
+ try{const r=await fetch(S.hook,o),t=(await r.text()).trim();ok=t=="ok";msg=ok?"":/ppConfig|accounts\.google|ServiceLogin/i.test(t)?"Google is asking for a sign-in, so the web app is not open to Anyone (Apps Script > Deploy > Manage deployments > Edit > Who has access: Anyone > New version). Your data is kept here and will sync once fixed":t=="denied"?"wrong access key (Settings must match KEY in the script)":"Google replied: "+t.replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim().slice(0,160)}
  catch(e){try{await fetch(S.hook,{...o,mode:"no-cors"});msg="request sent but Google did not confirm it"}catch(e2){msg="could not reach Google (offline or blocked)"}}
  list.forEach(r=>ok?pend.delete(r.cid):pend.add(r.cid));sy(ok,ok?new Date().toLocaleTimeString():msg);
  toast(ok?"Saved to Google Sheet ✔ (confirmed)":"Google Sheet NOT updated: "+msg+". Use 'Sync all' to retry.",ok?3200:15000)}
@@ -151,7 +168,7 @@ async function persist(r){const i=recs.findIndex(x=>x.cid==r.cid);if(i>=0)recs[i
  if(db){try{await db.collection("records").doc(r.cid).set(r)}catch(e){toast("Storage error: "+(e.message||e.code));return false}}else{try{localStorage.setItem("cc_recs",JSON.stringify(recs))}catch(e){toast("Browser storage full – export CSV");return false}}
  render();return true}
 async function save(){if(!valid())return null;const r=collect();if(!recs.some(x=>x.cid==r.cid)&&recs.some(x=>x.cid==r.cid))r.cid=nextId();
- if(await persist(r)){toast("Saved ✔");push([r]);return r}return null}
+ if(await persist(r)){toast("Saved ✔");autoOnSave(r);push([r]);return r}return null}
 $("save").onclick=save;$("new").onclick=blank;
 function head(title,rt){return`<div class=hd><img src="${LOGO}"><div class=co><b>${esc(S.co)}</b><br>${esc(S.addr)}<br>${esc(S.ph)} ${esc(S.em)}${S.trn?"<br>TRN: "+esc(S.trn):""}</div><div class=rt>${rt}</div></div><h2>${title}</h2>`}
 const row=(a,b,c,d)=>`<tr><td class=k>${a}</td><td>${esc(b)}</td><td class=k>${c}</td><td>${esc(d)}</td></tr>`;
@@ -177,7 +194,7 @@ $("sv").onclick=async()=>{if(!last)return;const h=`<!DOCTYPE html><meta charset=
 $("pdf").onclick=()=>{if(valid()){const r=collect();printDoc(formDoc(r),r.cid+"_intake")}};
 function stats(){const a=recs.filter(r=>!r.outDone),sum=b=>a.filter(r=>r.basis==b).reduce((s,r)=>s+(+r.qty||0),0),due=recs.filter(r=>r.outDone).reduce((s,r)=>s+Math.max(0,+r.balance||0),0);
  $("stats").innerHTML=`<div>Active customers<b>${new Set(a.map(r=>r.idno)).size}</b></div><div>Stored CBM<b>${sum("CBM").toFixed(1)}</b></div><div>Stored SQF<b>${sum("SQF").toFixed(0)}</b></div><div>Overdue outbound<b>${recs.filter(r=>stOf(r)=="Overdue").length}</b></div><div>Outstanding (AED)<b>${due.toFixed(0)}</b></div>`}
-function render(){$("cnt").textContent=recs.length;stats();$("rmc").textContent=remList().length;const q=$("q").value.toLowerCase(),f=$("sf").value;
+function render(){$("cnt").textContent=recs.length;stats();$("rmc").textContent=remList().length;if(!$("v4").hidden)renderLay();const q=$("q").value.toLowerCase(),f=$("sf").value;
  $("rows").innerHTML=recs.filter(r=>(!f||stOf(r)==f)&&(!q||[r.cid,r.name,r.idno,r.mob,r.loc,r.desc,r.invNo].join(" ").toLowerCase().includes(q))).map(r=>{const s=stOf(r),i=esc(r.cid);return`<tr><td>${i}</td><td>${esc(r.name)}</td><td>${esc(r.mob)}</td><td>${esc(r.loc)}</td><td>${esc(r.qty)} ${esc(r.basis)}</td><td>${esc(r.din)}</td><td>${esc(r.dout)}</td><td>${n2(r.charge)}</td><td><span class="tag ${s=="Active"?"ok":s=="Overdue"?"od":""}">${s}</span></td><td>${esc(r.invNo||"–")}</td>
  <td style="white-space:nowrap"><button class="btn o" data-a=e data-i="${i}">Edit</button> <button class="btn o" data-a=p data-i="${i}">Form</button> <button class="btn o" data-a=l data-i="${i}">Label</button> <button class="btn o" data-a=o data-i="${i}">${r.outDone?"Invoice":"Outbound"}</button>${r.outDone?"":` <button class="btn o" data-a=x data-i="${i}">Partial</button>`}</td></tr>`}).join("")||`<tr><td colspan=11>No records.</td></tr>`}
 $("q").oninput=render;$("sf").onchange=render;
@@ -193,11 +210,11 @@ const tsv=(sep,qt)=>[HDR,...recs.map(rowOf)].map(a=>a.map(v=>qt?'"'+String(v).re
 $("csv").onclick=async()=>{if(!dl)return toast("Use Copy for Sheets");try{await dl.save({filename:"citycube_records_"+today()+".csv",data:"\ufeff"+tsv(",",true)})}catch(e){toast("Not saved")}};
 $("cpy").onclick=async()=>{try{await navigator.clipboard.writeText(tsv("\t"));toast("Copied – paste into Google Sheets")}catch(e){toast("Copy blocked – use CSV")}};
 $("sync").onclick=()=>push(recs);
-const SHK=["co","trn","addr","ph","em","vat","pre","bank","foot"],enc=()=>encodeURIComponent(S.key||"");
+const SHK=["co","trn","addr","ph","em","vat","pre","bank","foot","bays","bw","bh","bd","ma","mh"],enc=()=>encodeURIComponent(S.key||"");
 async function nextInvR(){if(S.hook){try{const t=(await(await fetch(S.hook+"?action=inv&key="+enc())).text()).trim();if(/^\d+$/.test(t))return S.pre+t.padStart(5,"0")}catch(e){}toast("Could not reach Google Sheet for the invoice number – used a local number")}return nextInv()}
 async function loadSet(){if(!S.hook)return;try{const j=await(await fetch(S.hook+"?action=getset&key="+enc())).json();if(j.ok&&j.s){SHK.forEach(k=>{if(j.s[k]!==undefined)S[k]=j.s[k]});sfill()}}catch(e){}}
 function pushSet(){if(!S.hook)return;const s={};SHK.forEach(k=>s[k]=S[k]);fetch(S.hook,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify({key:S.key||"",action:"setset",s})}).catch(()=>{})}
-async function loadRemote(){if(!S.hook)return;try{const j=await(await fetch(S.hook+"?action=list&key="+enc())).json();if(!j.ok)throw 0;const n=HDR.length,old=Object.fromEntries(recs.map(r=>[r.cid,r])),rem=j.rows.map(a=>{const r={};COLS.forEach((k,i)=>r[k]=a[i]);const o=old[r.cid]||{};r.idImg=o.idImg||"";r.gImgs=o.gImgs||[];r.idLink=a[COLS.length+1];r.bills=a[COLS.length+3]||"";r.billedTo=a[COLS.length+4]||"";r.moves=a[COLS.length+5]||"";r.outDone=r.invNo?1:0;r.saved=o.saved||"";return r}).reverse(),ids=new Set(rem.map(r=>r.cid));recs=[...rem.filter(r=>!pend.has(r.cid)),...recs.filter(r=>pend.has(r.cid)||!ids.has(r.cid))];try{localStorage.setItem("cc_recs",JSON.stringify(recs))}catch(e){}render()}catch(e){}}
+async function loadRemote(){if(!S.hook)return;try{const j=await(await fetch(S.hook+"?action=list&key="+enc())).json();if(!j.ok)throw 0;const n=HDR.length,old=Object.fromEntries(recs.map(r=>[r.cid,r])),rem=j.rows.map(a=>{const r={};COLS.forEach((k,i)=>r[k]=a[i]);const o=old[r.cid]||{};r.idImg=o.idImg||"";r.gImgs=o.gImgs||[];r.idLink=a[COLS.length+1];r.bills=a[COLS.length+3]||"";r.billedTo=a[COLS.length+4]||"";r.moves=a[COLS.length+5]||"";r.ht=a[COLS.length+6]||"";r.outDone=r.invNo?1:0;r.saved=o.saved||"";return r}).reverse(),ids=new Set(rem.map(r=>r.cid));recs=[...rem.filter(r=>!pend.has(r.cid)),...recs.filter(r=>pend.has(r.cid)||!ids.has(r.cid))];try{localStorage.setItem("cc_recs",JSON.stringify(recs))}catch(e){}render()}catch(e){}}
 const addDays=(d,n)=>{const x=new Date(d+"T00:00:00Z");x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10)};
 const bl=r=>{try{return JSON.parse(r.bills||"[]")}catch(e){return[]}};
 function billFor(r,ym){const[y,m]=ym.split("-").map(Number),ms=ym+"-01",me=ym+"-"+String(new Date(y,m,0).getDate()).padStart(2,"0"),bt=r.billedTo||"";
@@ -1156,19 +1173,94 @@ function pickPartial(){
   $("pk2").innerHTML=`<option value="" selected disabled>${l.length?"Select customer…":"No customers in storage found"}</option>`+l.map(r=>`<option value="${esc(r.cid)}">${esc(r.name)} – ${esc(r.cid)} – ${esc(r.qty)} ${esc(r.basis)} – ${esc(r.loc)}</option>`).join("")};
  fl();$("pk1").oninput=fl;$("pk3").onclick=()=>$("md").style.display="none";$("pk2").onchange=()=>{const r=recs.find(x=>x.cid==$("pk2").value);if(r)partial(r)}}
 $("po").onclick=pickPartial;
+
+let PL=[],drag=null,sel=null,prev=null,layDirty=false,locT=0;const pendLoc=new Set();
+try{PL=JSON.parse(localStorage.getItem("cc_lay")||"[]")}catch(e){}
+const rcm=()=>Object.fromEntries(recs.filter(r=>!r.outDone&&(+r.qty||0)>0).map(r=>[r.cid,r]));
+const dem=(r,t)=>{const q=+r.qty||0;return r.basis=="SQF"?q/10.7639*(t=="G"?+S.bh:+S.mh):q};
+const isHaz=r=>/Hazardous/i.test(r.flags||""),mezOK=r=>String(r.ht||"")!==""&&+r.ht<=(+S.mh||1)+1e-9,own=r=>r.idno||r.cid;
+function zones(){const n=+S.bays||7,z=[];for(const t of["G","M"])for(const s of["L","R"])for(let i=1;i<=n;i++)z.push({id:t+"-"+s+i,t,s,i,cap:t=="G"?(+S.bw)*(+S.bh)*(+S.bd):(+S.ma/n)*(+S.mh)});return z}
+const placedF=(pl,c)=>pl.filter(p=>p.c==c).reduce((s,p)=>s+p.f,0);
+function occIn(pl,z,R){R=R||rcm();let s=0;for(const p of pl)if(p.z==z.id&&R[p.c])s+=p.f*dem(R[p.c],z.t);return s}
+function zoneOK(pl,r,z,R){R=R||rcm();if(z.t=="M"&&!mezOK(r))return"Mezzanine needs ‘Max item height’ of "+S.mh+" m or less on the record";
+ const o=pl.filter(p=>p.z==z.id&&p.c!=r.cid&&R[p.c]);if(isHaz(r)&&o.length)return"Hazardous goods need a bay of their own";if(o.some(p=>isHaz(R[p.c])))return z.id+" holds hazardous goods – no mixing";return""}
+function allocOne(pl,r,zs,R){const c=r.cid;let rem=1-placedF(pl,c);if(rem<1e-6)return true;
+ const n=+S.bays||7,days=r.dout&&r.din?Math.max(1,(new Date(r.dout)-new Date(r.din))/864e5):90,tgt=1+Math.round(Math.min(1,Math.max(0,(days-7)/173))*(n-1)),pref=$("lpm").checked&&mezOK(r),occ={};
+ zs.forEach(z=>occ[z.id]=occIn(pl,z,R));
+ const mine=new Set(pl.filter(p=>R[p.c]&&own(R[p.c])==own(r)).map(p=>p.z)),side=new Set([...mine].map(z=>z.slice(0,3)));
+ const fit=z=>zoneOK(pl,r,z,R)?0:Math.max(0,Math.min(rem,(z.cap-occ[z.id])/dem(r,z.t)));
+ const sc=(z,f)=>(z.cap-occ[z.id]-f*dem(r,z.t))+0.4*Math.abs(z.i-tgt)-(mine.has(z.id)?30:0)-(side.has(z.id.slice(0,3))?6:0)+(z.t=="M"?(pref?-6:6):0);
+ const place=(z,f)=>{const a=pl.find(p=>p.c==c&&p.z==z.id);if(a)a.f+=f;else pl.push({c,z:z.id,f});occ[z.id]+=f*dem(r,z.t);rem-=f};
+ let best=null,bs=1e9;for(const z of zs){const f=fit(z);if(f>=rem-1e-6){const s=sc(z,rem);if(s<bs){bs=s;best=z}}}
+ if(best){place(best,rem);return true}
+ let win=null;bs=1e9;
+ for(const t of["G","M"])for(const sd of["L","R"]){const row=zs.filter(z=>z.t==t&&z.s==sd).sort((a,b)=>a.i-b.i),fs=row.map(fit);
+  for(let a=0;a<row.length;a++){let sum=0;for(let b=a;b<row.length;b++){sum+=fs[b];if(sum>=rem-1e-6){const s2=(b-a+1)*1000+row.slice(a,b+1).reduce((q,z)=>q+sc(z,0),0);if(s2<bs){bs=s2;win=row.slice(a,b+1)}break}}}}
+ if(win){for(const z of win){const f=Math.min(fit(z),rem);if(f>1e-6)place(z,f);if(rem<1e-6)break}return rem<1e-6}
+ for(const z of [...zs].sort((a,b)=>sc(a,0)-sc(b,0))){const f=Math.min(fit(z),rem);if(f>1e-6)place(z,f);if(rem<1e-6)break}
+ return rem<1e-6}
+function autoAll(pl){const R=rcm(),zs=zones(),l=Object.values(R),ot={};l.forEach(r=>ot[own(r)]=(ot[own(r)]||0)+dem(r,"G"));
+ l.sort((a,b)=>(isHaz(b)-isHaz(a))||(ot[own(b)]-ot[own(a)])||(own(a)>own(b)?1:own(a)<own(b)?-1:0)||dem(b,"G")-dem(a,"G"));let miss=0;for(const r of l)if(!allocOne(pl,r,zs,R))miss++;return miss}
+const snap=pl=>{const m={};pl.forEach(p=>(m[p.c]=m[p.c]||[]).push(p.z+":"+p.f.toFixed(3)));Object.keys(m).forEach(k=>m[k]=m[k].sort().join("|"));return m};
+const diff=(a,b)=>[...new Set([...Object.keys(a),...Object.keys(b)])].filter(k=>a[k]!=b[k]);
+const splits=pl=>{const m={};pl.forEach(p=>m[p.c]=(m[p.c]||0)+1);return Object.values(m).filter(v=>v>1).length};
+const lcol=c=>{let h=2166136261;for(const ch of String(c))h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;h=Math.imul(h^(h>>>15),2246822519)>>>0;return`hsl(${(h>>>7)%360} 62% 70%)`};
+function layChanged(cs){layDirty=true;saveLay();cs.forEach(c=>pendLoc.add(c));clearTimeout(locT);locT=setTimeout(flushLoc,1500)}
+async function saveLay(){PL=PL.filter(p=>p.f>1e-6);try{localStorage.setItem("cc_lay",JSON.stringify(PL))}catch(e){}
+ if(db){try{await db.doc("layout/main").set({pl:PL})}catch(e){}}
+ if(!S.hook){layDirty=false;return}
+ const R=rcm(),b=JSON.stringify({key:S.key||"",action:"setlay",rows:PL.map(p=>[p.c,p.z,p.f.toFixed(5),R[p.c]?R[p.c].name:"",R[p.c]?(p.f*dem(R[p.c],p.z[0])).toFixed(2):""])}),o={method:"POST",headers:{"Content-Type":"text/plain"},body:b};
+ try{const t=(await(await fetch(S.hook,o)).text()).trim();layDirty=t!="ok";if(layDirty)toast("Layout not saved to Google Sheet: "+t.replace(/<[^>]*>/g," ").slice(0,100),9000)}catch(e){try{await fetch(S.hook,{...o,mode:"no-cors"});layDirty=false}catch(e2){layDirty=true;toast("Layout saved on this device only – no connection",6000)}}}
+async function loadLay(){if(layDirty||prev||!S.hook)return;try{const j=await(await fetch(S.hook+"?action=getlay&key="+enc())).json();if(j.ok){PL=j.rows.map(a=>({c:a[0],z:a[1],f:parseFloat(a[2])||0})).filter(p=>p.c&&p.f>0);try{localStorage.setItem("cc_lay",JSON.stringify(PL))}catch(e){}if(!$("v4").hidden)renderLay()}}catch(e){}}
+async function flushLoc(){const R=rcm(),ch=[];for(const c of pendLoc){const r=R[c];if(!r)continue;const ps=PL.filter(p=>p.c==c);if(!ps.length)continue;const s=ps.map(p=>p.z+" ("+(p.f*dem(r,p.z[0])).toFixed(1)+" CBM)").join(", ");if(r.loc!==s){const x={...r,loc:s};if(await persist(x)){ch.push(x);if($("cid").value==x.cid)$("loc").value=s}}}pendLoc.clear();if(ch.length)push(ch,true)}
+function autoOnSave(r){if(!$("lau").checked||!(+r.qty>0)||r.outDone||PL.some(p=>p.c==r.cid))return;const pl=PL.map(p=>({...p})),ok=allocOne(pl,r,zones(),rcm());
+ if(placedF(pl,r.cid)<1e-6)return toast("No free space found for "+r.name+" – see the Layout tab",7000);PL=pl;layChanged([r.cid]);toast(ok?"Allocated to "+pl.filter(p=>p.c==r.cid).map(p=>p.z).join(", "):"Only part of it fits – place the rest in the Layout tab",7000)}
+function moveTo(c,from,to){if(prev)return toast("Apply or discard the repack preview first");const R=rcm(),zs=zones(),zt=zs.find(z=>z.id==to),r=R[c];if(!zt||!r||from==to)return;
+ const fr=from?PL.filter(p=>p.c==c&&p.z==from).reduce((s,p)=>s+p.f,0):1-placedF(PL,c);if(fr<1e-6)return toast("Nothing left to place for this customer");
+ const bad=zoneOK(PL,r,zt,R);if(bad)return toast(bad,6000);
+ const free=zt.cap-occIn(PL,zt,R),mx=Math.max(0,free/dem(r,zt.t)),mv=Math.min(fr,mx);if(mv<1e-4)return toast(to+" has no free space ("+Math.max(0,free).toFixed(1)+" CBM)");
+ if(from){const a=PL.find(p=>p.c==c&&p.z==from);a.f-=mv;if(a.f<1e-6)PL.splice(PL.indexOf(a),1)}
+ const b=PL.find(p=>p.c==c&&p.z==to);if(b)b.f+=mv;else PL.push({c,z:to,f:mv});
+ toast(mv<fr-1e-4?"Only "+Math.round(mv/fr*100)+"% fitted – "+to+" is now full":"Placed in "+to);layChanged([c]);renderLay()}
+function unplace(c,z){if(prev)return toast("Apply or discard the repack preview first");const i=PL.findIndex(p=>p.c==c&&p.z==z);if(i<0)return;PL.splice(i,1);layChanged([c]);renderLay()}
+function segMenu(c,z){const R=rcm(),r=R[c],p=PL.find(x=>x.c==c&&x.z==z);if(!r||!p)return;const opts=zones().filter(t=>t.id!=z&&!zoneOK(PL,r,t,R)).map(t=>`<option value="${t.id}">${t.id} – ${(t.cap-occIn(PL,t,R)).toFixed(1)} CBM free</option>`).join("");
+ $("mdc").innerHTML=`<h3 style="margin-top:0;color:var(--nv)">${esc(r.name)} – ${z}</h3><p style="font-size:13px">${esc(c)} • ${(p.f*dem(r,z[0])).toFixed(1)} CBM here (${Math.round(p.f*100)}% of ${esc(r.qty)} ${esc(r.basis)})<br>${esc(r.desc)}</p><label>Move this to…<select id="sm1"><option value="" selected disabled>Select bay</option>${opts}</select></label><div class=bar style="position:static"><button class="btn o" id="sm2">Remove from ${z}</button><button class="btn o" id="sm3">Open record</button><button class="btn o" id="sm4">Close</button></div>`;$("md").style.display="flex";
+ $("sm1").onchange=()=>{$("md").style.display="none";moveTo(c,z,$("sm1").value)};$("sm2").onclick=()=>{$("md").style.display="none";unplace(c,z)};$("sm3").onclick=()=>{$("md").style.display="none";fill(r);tab(1)};$("sm4").onclick=()=>$("md").style.display="none"}
+function renderLay(){const zs=zones(),R=rcm(),pl=prev||PL,occ={};zs.forEach(z=>occ[z.id]=occIn(pl,z,R));
+ const bay=z=>{const segs=pl.filter(p=>p.z==z.id&&R[p.c]).map(p=>{const r=R[p.c],cb=p.f*dem(r,z.t),w=cb/z.cap*100;return`<div class="sg2${stOf(r)=="Overdue"?" od":""}${sel&&sel.c==p.c?" sl":""}" draggable="true" data-c="${esc(p.c)}" data-z="${z.id}" style="width:${w}%;background:${lcol(own(r))}" title="${esc(r.name)} • ${esc(p.c)}&#10;${cb.toFixed(1)} CBM here (${Math.round(p.f*100)}% of ${esc(r.qty)} ${esc(r.basis)})&#10;${esc(r.desc)}">${w>16?esc(r.name).slice(0,12):""}</div>`}).join(""),free=z.cap-occ[z.id];
+  return`<div class="bay${free<-0.01?" ov":""}" data-z="${z.id}"><div class="bt"><b>${z.id}</b><span>${free.toFixed(1)} free / ${z.cap.toFixed(1)}</span></div><div class="bb">${segs}</div></div>`};
+ const colm=(s,t)=>`<div class="pc${s=="R"?" r":""}">${zs.filter(z=>z.t==t&&z.s==s).sort((a,b)=>b.i-a.i).map(bay).join("")}</div>`;
+ const plan=(t,ti)=>`<div class="pl"><h4>${ti}</h4><div class="pg">${colm("L",t)}<div class="ai">AISLE – forklift</div>${colm("R",t)}</div><div class="dk">▼ Dock / entrance – bay 1 nearest ▼</div></div>`;
+ $("plans").innerHTML=plan("G","Ground floor – "+zs.filter(z=>z.t=="G").length+" bays")+plan("M","Mezzanine – "+zs.filter(z=>z.t=="M").length+" zones (≤ "+S.mh+" m goods)");
+ const un=Object.values(R).map(r=>({r,u:1-placedF(pl,r.cid)})).filter(x=>x.u>1e-6).sort((a,b)=>dem(b.r,"G")*b.u-dem(a.r,"G")*a.u);
+ $("chips").innerHTML=un.map(x=>`<div class="chip${sel&&sel.c==x.r.cid?" sl":""}" draggable="true" data-c="${esc(x.r.cid)}" data-z="" style="border-left-color:${lcol(own(x.r))}">${esc(x.r.name)} · ${esc(x.r.qty)} ${esc(x.r.basis)} · need ${(dem(x.r,"G")*x.u).toFixed(1)} CBM${mezOK(x.r)?" 🔻":""}${isHaz(x.r)?" ☣":""}</div>`).join("")||"<span style=\"color:var(--ok)\">✔ Everyone is placed</span>";
+ const used=t=>zs.filter(z=>z.t==t).reduce((s,z)=>s+occ[z.id],0),cap=t=>zs.filter(z=>z.t==t).reduce((s,z)=>s+z.cap,0),pc=t=>cap(t)?Math.round(used(t)/cap(t)*100):0;
+ $("lst").innerHTML=`<div>Ground used<b>${used("G").toFixed(0)} / ${cap("G").toFixed(0)} CBM (${pc("G")}%)</b></div><div>Mezzanine used<b>${used("M").toFixed(0)} / ${cap("M").toFixed(0)} CBM (${pc("M")}%)</b></div><div>Free in total<b>${(cap("G")+cap("M")-used("G")-used("M")).toFixed(0)} CBM</b></div><div>Customers to place<b>${un.length}</b></div><div>Split across bays<b>${splits(pl)}</b></div>`;
+ if(prev){const mvd=diff(snap(PL),snap(prev)).length;$("lban").innerHTML=`<div class="calc"><div style="flex:1;font-size:13px">Repack preview: <b>${mvd}</b> customer(s) would move • split customers ${splits(PL)} → ${splits(prev)} • not placed: ${un.length}</div><button class="btn s" id="lap">Apply</button><button class="btn o" id="lds" style="color:#fff">Discard</button></div>`;
+  $("lap").onclick=()=>{const old=snap(PL);PL=prev;prev=null;layChanged(diff(old,snap(PL)));renderLay()};$("lds").onclick=()=>{prev=null;renderLay()}}else $("lban").innerHTML=""}
+$("la").onclick=()=>{if(prev)return;const b=snap(PL),pl=PL.map(p=>({...p})),miss=autoAll(pl);PL=pl;layChanged(diff(b,snap(PL)));renderLay();toast(miss?miss+" customer(s) could not be fully placed – not enough space":"Everyone is allocated",6000)};
+$("lr").onclick=()=>{prev=[];autoAll(prev);renderLay()};
+const lv=$("v4");
+lv.addEventListener("dragstart",e=>{const t=e.target.closest("[data-c]");if(!t||prev){e.preventDefault();return}drag={c:t.dataset.c,z:t.dataset.z||null};e.dataTransfer.setData("text/plain",t.dataset.c);e.dataTransfer.effectAllowed="move"});
+lv.addEventListener("dragover",e=>{const t=e.target.closest(".bay,#unal");lv.querySelectorAll(".dh").forEach(x=>x.classList.remove("dh"));if(t){e.preventDefault();t.classList.add("dh")}});
+lv.addEventListener("dragend",()=>lv.querySelectorAll(".dh").forEach(x=>x.classList.remove("dh")));
+lv.addEventListener("drop",e=>{e.preventDefault();lv.querySelectorAll(".dh").forEach(x=>x.classList.remove("dh"));const b=e.target.closest(".bay"),u=e.target.closest("#unal");if(!drag)return;if(b)moveTo(drag.c,drag.z,b.dataset.z);else if(u&&drag.z)unplace(drag.c,drag.z);drag=null});
+lv.addEventListener("click",e=>{if(prev)return;const s=e.target.closest(".sg2"),c=e.target.closest(".chip"),b=e.target.closest(".bay");
+ if(c){sel=sel&&sel.c==c.dataset.c?null:{c:c.dataset.c,z:null};return renderLay()}if(b&&sel){const s2=sel;sel=null;return moveTo(s2.c,s2.z,b.dataset.z)}if(s)segMenu(s.dataset.c,s.dataset.z)});
+lv.addEventListener("dblclick",e=>{const c=e.target.closest(".chip");if(!c||prev)return;const R=rcm(),r=R[c.dataset.c];if(!r)return;const pl=PL.map(p=>({...p})),ok=allocOne(pl,r,zones(),R);PL=pl;sel=null;layChanged([r.cid]);renderLay();toast(ok?"Placed":"Only part fits",4000)});
 function openQ(){const c=new URLSearchParams(location.search).get("cid"),r=c&&recs.find(x=>x.cid==c);if(r){fill(r);tab(1);toast("Opened "+c)}}
 $("lbl").onclick=async()=>{const r=await save();if(r)labels(r)};$("rmd").onclick=reminders;$("mi").onclick=monthly;
-const SK=["co","trn","addr","ph","em","vat","pre","bank","foot","hook","key"];
+const SK=["co","trn","addr","ph","em","vat","pre","bank","foot","hook","key","bays","bw","bh","bd","ma","mh"];
 function sfill(){SK.forEach(k=>$("s_"+k).value=S[k]??"")}
 $("ss").onclick=async()=>{SK.forEach(k=>S[k]=$("s_"+k).value.trim());try{if(db)await db.doc("settings/main").set(S);else localStorage.setItem("cc_set",JSON.stringify(S));toast("Settings saved");pushSet()}catch(e){toast("Could not save settings")}calc()};
 $("st").onclick=()=>{SK.forEach(k=>S[k]=$("s_"+k).value.trim());push([{cid:"TEST-000",name:"Test row - delete me",status:"Test"}])};
-function tab(n){[1,2,3].forEach(i=>{$("v"+i).hidden=n!=i;$("t"+i).className=n==i?"on":""})}
-$("t1").onclick=()=>tab(1);$("t2").onclick=()=>{render();tab(2);loadRemote()};$("t3").onclick=()=>{sfill();tab(3)};
+function tab(n){[1,2,3,4].forEach(i=>{$("v"+i).hidden=n!=i;$("t"+i).className=n==i?"on":""})}
+$("t1").onclick=()=>tab(1);$("t2").onclick=()=>{render();tab(2);loadRemote()};$("t4").onclick=()=>{renderLay();tab(4);loadLay()};$("t3").onclick=()=>{sfill();tab(3)};
 try{recs=JSON.parse(localStorage.getItem("cc_recs")||"[]");Object.assign(S,JSON.parse(localStorage.getItem("cc_set")||"{}"))}catch(e){}
-blank();render();sfill();loadSet().then(loadRemote).then(openQ);setInterval(()=>{if(!$("v2").hidden)loadRemote()},30000);
+blank();render();sfill();loadSet().then(loadRemote).then(loadLay).then(openQ);setInterval(()=>{if(!$("v2").hidden)loadRemote();if(!$("v4").hidden)loadLay()},30000);
 (async()=>{try{db=await claude.use("db");dl=await claude.use("downloads");
  if(db){recs=[];db.collection("records").onSnapshot(s=>{recs=s.docs.map(d=>d.data()).sort((a,b)=>(b.saved||"").localeCompare(a.saved||""));if(!$("name").value)$("cid").value=nextId();render()});
-  const d=await db.doc("settings/main").get();if(d.exists){Object.assign(S,d.data());sfill()}}
+  const d=await db.doc("settings/main").get();if(d.exists){Object.assign(S,d.data());sfill()}const l=await db.doc("layout/main").get();if(l.exists)PL=l.data().pl||[]}
  if(last&&dl)$("sv").hidden=false}catch(e){}})();
 $("shcss").textContent=[...document.styleSheets[0].cssRules].filter(r=>/^\.sh/.test(r.selectorText||"")).map(r=>r.cssText).join("");
 </script></body></html>
