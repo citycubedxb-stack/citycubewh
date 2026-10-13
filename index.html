@@ -49,7 +49,7 @@ table{width:100%;border-collapse:collapse;background:var(--card)}th,td{padding:8
 .sh .lb{width:92mm;border:2px solid #1b3a78;border-radius:6px;padding:6px 8px;margin:0 4mm 4mm 0;display:inline-block;vertical-align:top;page-break-inside:avoid;font-size:11px;text-align:center}.sh .lb .lg{height:34px}.sh .lb .ci{font-size:20px;font-weight:700;color:#1b3a78}.sh .lb .lc{font-size:17px;font-weight:700;background:#e8f3fa;margin:4px 0;padding:3px}.sh .lb .qr{width:34mm;height:34mm}.sh .lb .fl{color:#c0392b;font-weight:700}
 @media print{body>*:not(#sheet){display:none!important}#sheet{display:block!important}@page{margin:9mm}}
 </style></head><body>
-<header><img id="lg" alt="CityCube Warehousing"><div><h1>Storage Manager</h1><small>Inbound • Storage • Outbound • Tax Invoice • v12</small><small id="sy" style="font-weight:700"></small></div>
+<header><img id="lg" alt="CityCube Warehousing"><div><h1>Storage Manager</h1><small>Inbound • Storage • Outbound • Tax Invoice • v13</small><small id="sy" style="font-weight:700"></small></div>
 <nav><button id="t1" class="on">New Entry</button><button id="t2">Records (<span id="cnt">0</span>)</button><button id="t4">Layout</button><button id="t3">Settings</button><button id="sv" hidden>⬇ Save last print</button></nav></header>
 <main>
 <section id="v1"><form onsubmit="return false">
@@ -107,7 +107,7 @@ table{width:100%;border-collapse:collapse;background:var(--card)}th,td{padding:8
 
 <section id="v4" hidden>
 <div class="st" id="lst"></div>
-<div class="bar" style="position:static"><button class="btn" id="la">⚡ Auto-allocate unplaced</button><button class="btn s" id="lr">♻ Repack all (preview)</button><label style="display:flex;gap:6px;align-items:center;font-size:13px;color:var(--tx)"><input type="checkbox" id="lpm" checked style="width:auto;margin:0">Prefer mezzanine for low goods</label><label style="display:flex;gap:6px;align-items:center;font-size:13px;color:var(--tx)"><input type="checkbox" id="lau" checked style="width:auto;margin:0">Auto-allocate on save</label></div>
+<div class="bar" style="position:static"><button class="btn" id="la">⚡ Auto-allocate unplaced</button><button class="btn s" id="lr">♻ Repack all (preview)</button><button class="btn o" id="lrl">↻ Reload shared layout</button><b id="lsy" style="font-size:12px"></b><label style="display:flex;gap:6px;align-items:center;font-size:13px;color:var(--tx)"><input type="checkbox" id="lpm" checked style="width:auto;margin:0">Prefer mezzanine for low goods</label><label style="display:flex;gap:6px;align-items:center;font-size:13px;color:var(--tx)"><input type="checkbox" id="lau" checked style="width:auto;margin:0">Auto-allocate on save</label></div>
 <div id="lban"></div>
 <div class="un" id="unal"><b>To place</b> <span style="font-size:12px;color:var(--mut)">– drag a customer onto a bay, or tap a customer then tap a bay, or double-click to auto-place</span><div id="chips"></div></div>
 <div class="plans" id="plans"></div>
@@ -1208,10 +1208,15 @@ const lcol=c=>{let h=2166136261;for(const ch of String(c))h=Math.imul(h^ch.charC
 function layChanged(cs){layDirty=true;saveLay();cs.forEach(c=>pendLoc.add(c));clearTimeout(locT);locT=setTimeout(flushLoc,1500)}
 async function saveLay(){PL=PL.filter(p=>p.f>1e-6);try{localStorage.setItem("cc_lay",JSON.stringify(PL))}catch(e){}
  if(db){try{await db.doc("layout/main").set({pl:PL})}catch(e){}}
- if(!S.hook){layDirty=false;return}
+ if(!S.hook){layDirty=false;return lsy(false,"no Google Sheet URL in Settings – layout is NOT shared with other devices")}
  const R=rcm(),b=JSON.stringify({key:S.key||"",action:"setlay",rows:PL.map(p=>[p.c,p.z,p.f.toFixed(5),R[p.c]?R[p.c].name:"",R[p.c]?(p.f*dem(R[p.c],p.z[0])).toFixed(2):""])}),o={method:"POST",headers:{"Content-Type":"text/plain"},body:b};
- try{const t=(await(await fetch(S.hook,o)).text()).trim();layDirty=t!="ok";if(layDirty)toast("Layout not saved to Google Sheet: "+t.replace(/<[^>]*>/g," ").slice(0,100),9000)}catch(e){try{await fetch(S.hook,{...o,mode:"no-cors"});layDirty=false}catch(e2){layDirty=true;toast("Layout saved on this device only – no connection",6000)}}}
-async function loadLay(){if(layDirty||prev||!S.hook)return;try{const j=await(await fetch(S.hook+"?action=getlay&key="+enc())).json();if(j.ok){PL=j.rows.map(a=>({c:a[0],z:a[1],f:parseFloat(a[2])||0})).filter(p=>p.c&&p.f>0);try{localStorage.setItem("cc_lay",JSON.stringify(PL))}catch(e){}if(!$("v4").hidden)renderLay()}}catch(e){}}
+ try{const t=(await(await fetch(S.hook,o)).text()).trim();layDirty=t!="ok";if(layDirty)lsy(false,/ppConfig|accounts\.google/i.test(t)?"Google asks for sign-in – access must be Anyone":t=="denied"?"wrong access key":"Google script is an old version? Reply: "+t.replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim().slice(0,80));else lsy(true,"saved & shared "+new Date().toLocaleTimeString())}
+ catch(e){try{await fetch(S.hook,{...o,mode:"no-cors"});layDirty=false;lsy(false,"sent but not confirmed")}catch(e2){layDirty=true;lsy(false,"offline – kept on this device only")}}}
+function lsy(ok,m){const e=$("lsy");e.textContent=(ok?"✔ Layout ":"⚠ Layout not shared – ")+m;e.style.color=ok?"var(--ok)":"var(--wr)";if(!ok)toast("Layout: "+m,8000)}
+async function loadLay(force){if(!force&&(layDirty||prev))return;if(!S.hook)return lsy(false,"no Google Sheet URL in Settings");
+ try{const j=await(await fetch(S.hook+"?action=getlay&key="+enc())).json();
+  if(j.ok){PL=j.rows.map(a=>({c:a[0],z:a[1],f:parseFloat(a[2])||0})).filter(p=>p.c&&p.f>0);layDirty=false;try{localStorage.setItem("cc_lay",JSON.stringify(PL))}catch(e){}$("lsy").textContent="✔ Layout loaded "+new Date().toLocaleTimeString();$("lsy").style.color="var(--ok)";if(!$("v4").hidden)renderLay()}
+  else lsy(false,j.error=="denied"?"wrong access key":"Google script is an old version – paste the new script and redeploy")}catch(e){lsy(false,"could not read from Google (check URL / access Anyone)")}}
 async function flushLoc(){const R=rcm(),ch=[];for(const c of pendLoc){const r=R[c];if(!r)continue;const ps=PL.filter(p=>p.c==c);if(!ps.length)continue;const s=ps.map(p=>p.z+" ("+(p.f*dem(r,p.z[0])).toFixed(1)+" CBM)").join(", ");if(r.loc!==s){const x={...r,loc:s};if(await persist(x)){ch.push(x);if($("cid").value==x.cid)$("loc").value=s}}}pendLoc.clear();if(ch.length)push(ch,true)}
 function autoOnSave(r){if(!$("lau").checked||!(+r.qty>0)||r.outDone||PL.some(p=>p.c==r.cid))return;const pl=PL.map(p=>({...p})),ok=allocOne(pl,r,zones(),rcm());
  if(placedF(pl,r.cid)<1e-6)return toast("No free space found for "+r.name+" – see the Layout tab",7000);PL=pl;layChanged([r.cid]);toast(ok?"Allocated to "+pl.filter(p=>p.c==r.cid).map(p=>p.z).join(", "):"Only part of it fits – place the rest in the Layout tab",7000)}
@@ -1239,7 +1244,7 @@ function renderLay(){const zs=zones(),R=rcm(),pl=prev||PL,occ={};zs.forEach(z=>o
  if(prev){const mvd=diff(snap(PL),snap(prev)).length;$("lban").innerHTML=`<div class="calc"><div style="flex:1;font-size:13px">Repack preview: <b>${mvd}</b> customer(s) would move • split customers ${splits(PL)} → ${splits(prev)} • not placed: ${un.length}</div><button class="btn s" id="lap">Apply</button><button class="btn o" id="lds" style="color:#fff">Discard</button></div>`;
   $("lap").onclick=()=>{const old=snap(PL);PL=prev;prev=null;layChanged(diff(old,snap(PL)));renderLay()};$("lds").onclick=()=>{prev=null;renderLay()}}else $("lban").innerHTML=""}
 $("la").onclick=()=>{if(prev)return;const b=snap(PL),pl=PL.map(p=>({...p})),miss=autoAll(pl);PL=pl;layChanged(diff(b,snap(PL)));renderLay();toast(miss?miss+" customer(s) could not be fully placed – not enough space":"Everyone is allocated",6000)};
-$("lr").onclick=()=>{prev=[];autoAll(prev);renderLay()};
+$("lr").onclick=()=>{prev=[];autoAll(prev);renderLay()};$("lrl").onclick=async()=>{prev=null;sel=null;await loadLay(true);renderLay()};document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!$("v4").hidden)loadLay()});
 const lv=$("v4");
 lv.addEventListener("dragstart",e=>{const t=e.target.closest("[data-c]");if(!t||prev){e.preventDefault();return}drag={c:t.dataset.c,z:t.dataset.z||null};e.dataTransfer.setData("text/plain",t.dataset.c);e.dataTransfer.effectAllowed="move"});
 lv.addEventListener("dragover",e=>{const t=e.target.closest(".bay,#unal");lv.querySelectorAll(".dh").forEach(x=>x.classList.remove("dh"));if(t){e.preventDefault();t.classList.add("dh")}});
@@ -1257,7 +1262,7 @@ $("st").onclick=()=>{SK.forEach(k=>S[k]=$("s_"+k).value.trim());push([{cid:"TEST
 function tab(n){[1,2,3,4].forEach(i=>{$("v"+i).hidden=n!=i;$("t"+i).className=n==i?"on":""})}
 $("t1").onclick=()=>tab(1);$("t2").onclick=()=>{render();tab(2);loadRemote()};$("t4").onclick=()=>{renderLay();tab(4);loadLay()};$("t3").onclick=()=>{sfill();tab(3)};
 try{recs=JSON.parse(localStorage.getItem("cc_recs")||"[]");Object.assign(S,JSON.parse(localStorage.getItem("cc_set")||"{}"))}catch(e){}
-blank();render();sfill();loadSet().then(loadRemote).then(loadLay).then(openQ);setInterval(()=>{if(!$("v2").hidden)loadRemote();if(!$("v4").hidden)loadLay()},30000);
+blank();render();sfill();loadSet().then(loadRemote).then(loadLay).then(openQ);setInterval(()=>{if(!$("v2").hidden)loadRemote()},30000);setInterval(()=>{if(!$("v4").hidden)loadLay()},10000);
 (async()=>{try{db=await claude.use("db");dl=await claude.use("downloads");
  if(db){recs=[];db.collection("records").onSnapshot(s=>{recs=s.docs.map(d=>d.data()).sort((a,b)=>(b.saved||"").localeCompare(a.saved||""));if(!$("name").value)$("cid").value=nextId();render()});
   const d=await db.doc("settings/main").get();if(d.exists){Object.assign(S,d.data());sfill()}const l=await db.doc("layout/main").get();if(l.exists)PL=l.data().pl||[]}
