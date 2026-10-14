@@ -51,7 +51,7 @@ table{width:100%;border-collapse:collapse;background:var(--card)}th,td{padding:8
 .sh .ag .agc{column-count:2;column-gap:6mm;text-align:justify}.sh .ag .agc p{margin:0 0 3px;break-inside:avoid-column}.sh .ag .ack{border-top:2px solid #1b3a78;margin-top:4px;padding-top:3px;font-size:7pt}.sh .ag .sgn{display:flex;gap:16px;margin-top:20px}.sh .ag .sgn div{flex:1;border-top:1px solid #000;padding-top:2px;font-size:6.6pt;text-align:center}
 @media print{body{background:#fff!important}body>*:not(#sheet){display:none!important}#sheet{display:block!important}@page{margin:9mm}}
 </style></head><body>
-<header><img id="lg" alt="CityCube Warehousing"><div><h1>Storage Manager</h1><small>Inbound • Storage • Outbound • Tax Invoice • v16</small><small id="sy" style="font-weight:700"></small></div>
+<header><img id="lg" alt="CityCube Warehousing"><div><h1>Storage Manager</h1><small>Inbound • Storage • Outbound • Tax Invoice • v17</small><small id="sy" style="font-weight:700"></small></div>
 <nav><button id="t1" class="on">New Entry</button><button id="t2">Records (<span id="cnt">0</span>)</button><button id="t4">Layout</button><button id="t3">Settings</button><button id="sv" hidden>⬇ Save last print</button></nav></header>
 <main>
 <section id="v1"><form onsubmit="return false">
@@ -122,7 +122,7 @@ table{width:100%;border-collapse:collapse;background:var(--card)}th,td{padding:8
 <label>Bays per side<input type="number" id="s_bays"></label><label>Bay width (m)<input type="number" id="s_bw" step="0.01"></label><label>Bay height (m)<input type="number" id="s_bh" step="0.01"></label><label>Bay depth (m)<input type="number" id="s_bd" step="0.01"></label><label>Mezzanine usable area per side (sqm)<input type="number" id="s_ma" step="0.01"></label><label>Mezzanine clear height (m)<input type="number" id="s_mh" step="0.01"></label><label>Trade licence no. (agreement)<input id="s_lic"></label><label>Courts (jurisdiction)<input id="s_court"></label><label>Liability cap per claim (AED)<input type="number" id="s_cap"></label><label>Late charge % per month<input type="number" id="s_late" step="0.01"></label><label>Grace days before late charge<input type="number" id="s_grace"></label><label>Days before unclaimed goods may be sold<input type="number" id="s_aband"></label><label>Deposit refund within (days)<input type="number" id="s_depd"></label><label>Notice period (days)<input type="number" id="s_noticed"></label><label>ID photo kept after closing (days)<input type="number" id="s_idret"></label><label class="w2">Access key (must match KEY in the Apps Script – same on every device)<input id="s_key" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"></label><label class="w2">Bank details (printed on invoice)<textarea id="s_bank" rows="2"></textarea></label>
 <label class="w2">Invoice footer note<input id="s_foot"></label>
 <label class="w2">Google Sheet web-app URL (Apps Script – see setup guide)<input id="s_hook" placeholder="https://script.google.com/macros/s/…/exec"></label>
-</div><div class="bar" style="position:static"><button class="btn" id="ss">Save settings</button><button class="btn s" id="st">Send test row to Google Sheet</button></div></fieldset></section>
+</div><div class="bar" style="position:static"><button class="btn" id="ss">Save settings</button><button class="btn o" id="slk">🔒 Lock settings</button><button class="btn s" id="st">Send test row to Google Sheet</button></div></fieldset></section>
 </main>
 <div id="md"><div id="mdc"></div></div>
 <div id="sheet" class="sh"></div><div class="toast" id="toast"></div>
@@ -215,7 +215,7 @@ $("sync").onclick=()=>push(recs);
 const SHK=["co","trn","addr","ph","em","vat","pre","bank","foot","bays","bw","bh","bd","ma","mh","lic","court","cap","late","grace","aband","depd","noticed","idret"],enc=()=>encodeURIComponent(S.key||"");
 async function nextInvR(){if(S.hook){try{const t=(await(await fetch(S.hook+"?action=inv&key="+enc())).text()).trim();if(/^\d+$/.test(t))return S.pre+t.padStart(5,"0")}catch(e){}toast("Could not reach Google Sheet for the invoice number – used a local number")}return nextInv()}
 async function loadSet(){if(!S.hook)return;try{const j=await(await fetch(S.hook+"?action=getset&key="+enc())).json();if(j.ok&&j.s){SHK.forEach(k=>{if(j.s[k]!==undefined)S[k]=j.s[k]});sfill()}}catch(e){}}
-function pushSet(){if(!S.hook)return;const s={};SHK.forEach(k=>s[k]=S[k]);fetch(S.hook,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify({key:S.key||"",action:"setset",s})}).catch(()=>{})}
+function pushSet(){if(!S.hook)return;const s={};SHK.forEach(k=>s[k]=S[k]);fetch(S.hook,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify({key:S.key||"",pin:sessionStorage.getItem("cc_pin")||"",action:"setset",s})}).catch(()=>{})}
 async function loadRemote(){if(!S.hook)return;try{const j=await(await fetch(S.hook+"?action=list&key="+enc())).json();if(!j.ok)throw 0;const n=HDR.length,old=Object.fromEntries(recs.map(r=>[r.cid,r])),rem=j.rows.map(a=>{const r={};COLS.forEach((k,i)=>r[k]=a[i]);const o=old[r.cid]||{};r.idImg=o.idImg||"";r.gImgs=o.gImgs||[];r.idLink=a[COLS.length+1];r.bills=a[COLS.length+3]||"";r.billedTo=a[COLS.length+4]||"";r.moves=a[COLS.length+5]||"";r.ht=a[COLS.length+6]||"";r.outDone=r.invNo?1:0;r.saved=o.saved||"";return r}).reverse(),ids=new Set(rem.map(r=>r.cid));recs=[...rem.filter(r=>!pend.has(r.cid)),...recs.filter(r=>pend.has(r.cid)||(!ids.has(r.cid)&&!r.outDone))];try{localStorage.setItem("cc_recs",JSON.stringify(recs))}catch(e){}render()}catch(e){}}
 const addDays=(d,n)=>{const x=new Date(d+"T00:00:00Z");x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10)};
 const bl=r=>{try{return JSON.parse(r.bills||"[]")}catch(e){return[]}};
@@ -1283,16 +1283,24 @@ function agrDoc(r){const U={Daily:"day",Monthly:"month (30-day period)",Annually
 <div class="ack"><b>Acknowledgement:</b> I, <b>${nm}</b>, confirm that I have read and understood this Agreement in full (in English, or as explained to me in: ____________), have had the opportunity to ask questions, and accept it, including the highlighted clauses 9, 11, 12, 15 and 18. I confirm the details above are correct. ☐ I received a copy.
 <div class="sgn"><div>Customer signature<br>${nm} • ${esc(r.idtype||"ID")} ${f(r.idno)}</div><div>Date</div><div>Customer initials</div><div>For ${co} – name, signature &amp; stamp</div></div></div></div>`}
 const formDoc=r=>'<div class="fp">'+frontDoc(r)+'</div>'+agrDoc(r);
+let adm=!!sessionStorage.getItem("cc_pin"),logoTaps=[];
+function applyLock(){$("t3").style.display=(S.hook&&!adm)?"none":"";$("slk").style.display=(S.hook&&adm)?"":"none";if(S.hook&&!adm&&!$("v3").hidden)tab(1)}
+async function adminVerify(pin){if(!S.hook)return true;try{const j=await(await fetch(S.hook+"?action=adminok&key="+enc()+"&pin="+encodeURIComponent(pin))).json();if(j.ok&&j.nopin)toast("No admin PIN is set in the Google script yet – run setAdminPin (see the guide). Settings are unprotected until you do.",9000);return !!j.ok}catch(e){toast("Could not reach Google to check the PIN",5000);return false}}
+function adminPrompt(){$("mdc").innerHTML=`<h3 style="margin-top:0;color:var(--nv)">Admin unlock</h3><label>Admin PIN<input id="ap1" type="password" autocomplete="off"></label><div class=bar style="position:static"><button class=btn id="ap2">Unlock settings</button><button class="btn o" id="ap3">Cancel</button></div>`;$("md").style.display="flex";$("ap1").focus();
+ const go=async()=>{const pin=$("ap1").value;if(!pin)return;$("ap2").disabled=true;if(await adminVerify(pin)){sessionStorage.setItem("cc_pin",pin);adm=true;$("md").style.display="none";applyLock();sfill();tab(3);toast("Settings unlocked for this session",3000)}else{$("ap2").disabled=false;toast("Wrong admin PIN",3000)}};
+ $("ap2").onclick=go;$("ap1").onkeydown=e=>{if(e.key=="Enter")go()};$("ap3").onclick=()=>$("md").style.display="none"}
+$("lg").addEventListener("click",()=>{const t=Date.now();logoTaps=logoTaps.filter(x=>t-x<2000);logoTaps.push(t);if(logoTaps.length>=3){logoTaps=[];if(S.hook&&!adm)adminPrompt();else if(adm)toast("Settings already unlocked",2000)}});
+$("slk").onclick=()=>{sessionStorage.removeItem("cc_pin");adm=false;applyLock();tab(1);toast("Settings locked",2000)};
 function openQ(){const c=new URLSearchParams(location.search).get("cid"),r=c&&recs.find(x=>x.cid==c);if(r){fill(r);tab(1);toast("Opened "+c)}}
 $("lbl").onclick=async()=>{const r=await save();if(r)labels(r)};$("rmd").onclick=reminders;$("mi").onclick=monthly;
 const SK=["co","trn","addr","ph","em","vat","pre","bank","foot","hook","key","bays","bw","bh","bd","ma","mh","lic","court","cap","late","grace","aband","depd","noticed","idret"];
 function sfill(){SK.forEach(k=>$("s_"+k).value=S[k]??"")}
-$("ss").onclick=async()=>{SK.forEach(k=>S[k]=$("s_"+k).value.trim());try{if(db)await db.doc("settings/main").set(S);else localStorage.setItem("cc_set",JSON.stringify(S));toast("Settings saved");pushSet()}catch(e){toast("Could not save settings")}calc()};
+$("ss").onclick=async()=>{SK.forEach(k=>S[k]=$("s_"+k).value.trim());try{if(db)await db.doc("settings/main").set(S);else localStorage.setItem("cc_set",JSON.stringify(S));toast("Settings saved");pushSet();applyLock()}catch(e){toast("Could not save settings")}calc()};
 $("st").onclick=()=>{SK.forEach(k=>S[k]=$("s_"+k).value.trim());push([{cid:"TEST-000",name:"Test row - delete me",status:"Test"}])};
 function tab(n){[1,2,3,4].forEach(i=>{$("v"+i).hidden=n!=i;$("t"+i).className=n==i?"on":""})}
 $("t1").onclick=()=>tab(1);$("t2").onclick=()=>{render();tab(2);loadRemote()};$("t4").onclick=()=>{renderLay();tab(4);loadLay()};$("t3").onclick=()=>{sfill();tab(3)};
 try{recs=JSON.parse(localStorage.getItem("cc_recs")||"[]");Object.assign(S,JSON.parse(localStorage.getItem("cc_set")||"{}"))}catch(e){}
-blank();render();sfill();loadSet().then(loadRemote).then(loadLay).then(openQ);setInterval(()=>{if(!$("v2").hidden)loadRemote()},30000);setInterval(()=>{if(!$("v4").hidden)loadLay()},10000);
+blank();render();sfill();applyLock();loadSet().then(loadRemote).then(loadLay).then(openQ);setInterval(()=>{if(!$("v2").hidden)loadRemote()},30000);setInterval(()=>{if(!$("v4").hidden)loadLay()},10000);
 (async()=>{try{db=await claude.use("db");dl=await claude.use("downloads");
  if(db){recs=[];db.collection("records").onSnapshot(s=>{recs=s.docs.map(d=>d.data()).sort((a,b)=>(b.saved||"").localeCompare(a.saved||""));if(!$("name").value)$("cid").value=nextId();render()});
   const d=await db.doc("settings/main").get();if(d.exists){Object.assign(S,d.data());sfill()}const l=await db.doc("layout/main").get();if(l.exists)PL=l.data().pl||[]}
